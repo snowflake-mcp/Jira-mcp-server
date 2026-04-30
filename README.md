@@ -39,11 +39,6 @@ Add the following to your Cursor MCP config (`.cursor/mcp.json`):
     "jira": {
       "command": "/full/path/to/jira-mcp-server/venv/bin/python",
       "args": ["/full/path/to/jira-mcp-server/jira_mcp/main.py"],
-      "env": {
-        "JIRA_BASE_URL": "https://yourcompany.atlassian.net",
-        "JIRA_EMAIL": "you@company.com",
-        "JIRA_API_TOKEN": "your-api-token"
-      }
     }
   }
 }

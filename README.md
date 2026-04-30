@@ -2,6 +2,8 @@
 
 An MCP (Model Context Protocol) server that lets AI assistants read Jira tickets.
 
+-----
+
 ## Setup
 
 ### 1. Install dependencies

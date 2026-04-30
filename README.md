@@ -1,6 +1,6 @@
 # Jira MCP Server
 
-An MCP (Model Context Protocol) server that lets AI assistants read Jira tickets.
+An MCP (Model Context Protocol) server that lets AI assistants read Jira tickets. This MCP server uses API token based authentication. 
 
 -----
 

@@ -5,20 +5,21 @@ import json
 from typing import Optional, Any
 
 import requests
-from pathlib import Path
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from tools.GetIssue import GetIssue
 from tools.ListUserIssues import ListUserIssues
 from tools.comments.AddComment import AddComment
 from tools.comments.EditComment import EditComment
 from tools.comments.DeleteComment import DeleteComment
+from tools.transitions.GetTransitions import GetTransitions
+from tools.transitions.TransitionIssue import TransitionIssue
 
 logger = logging.getLogger('jira_connection')
 
-load_dotenv(Path(__file__).parent / ".env")
+load_dotenv(find_dotenv())
 
 
-class JiraConnection(GetIssue, ListUserIssues, AddComment, EditComment, DeleteComment):
+class JiraConnection(GetIssue, ListUserIssues, AddComment, EditComment, DeleteComment, GetTransitions, TransitionIssue):
     """Manages Jira API connections and request execution."""
 
     def __init__(self) -> None:
@@ -83,6 +84,8 @@ class JiraConnection(GetIssue, ListUserIssues, AddComment, EditComment, DeleteCo
                 f"HTTP {response.status_code}: {error_body}",
                 response=response,
             )
+        if not response.content:
+            return {}
         return response.json()
 
     def cleanup(self) -> None:

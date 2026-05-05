@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Any
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import mcp.server.stdio
 from mcp.server import Server
 from mcp.types import Tool, TextContent
@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger('jira_server')
 
-load_dotenv()
+load_dotenv(find_dotenv())
 
 
 class JiraServer(Server):
@@ -131,6 +131,42 @@ class JiraServer(Server):
                         "required": ["issue_key", "comment_id"]
                     }
                 ),
+                Tool(
+                    name="get_transitions",
+                    description="Get the available status transitions for a Jira issue. "
+                                "Use this to discover which statuses the issue can be moved to "
+                                "(e.g. 'In Progress', 'Done', 'Closed').",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "issue_key": {
+                                "type": "string",
+                                "description": "The Jira issue key, e.g. PROJ-123"
+                            }
+                        },
+                        "required": ["issue_key"]
+                    }
+                ),
+                Tool(
+                    name="transition_issue",
+                    description="Change the status of a Jira issue by transitioning it to a new state "
+                                "(e.g. from 'Backlog' to 'In Progress', or 'In Progress' to 'Done'). "
+                                "Use get_transitions first to see available transition names.",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "issue_key": {
+                                "type": "string",
+                                "description": "The Jira issue key, e.g. PROJ-123"
+                            },
+                            "transition_name": {
+                                "type": "string",
+                                "description": "The name of the transition to apply, e.g. 'In Progress', 'Done', 'Closed'"
+                            }
+                        },
+                        "required": ["issue_key", "transition_name"]
+                    }
+                ),
             ]
 
         @self.call_tool()
@@ -164,6 +200,15 @@ class JiraServer(Server):
                     issue_key = arguments.get("issue_key", "")
                     comment_id = arguments.get("comment_id", "")
                     result = self.db.delete_comment(issue_key, comment_id)
+                    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+                elif name == "get_transitions":
+                    issue_key = arguments.get("issue_key", "")
+                    result = self.db.get_transitions(issue_key)
+                    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+                elif name == "transition_issue":
+                    issue_key = arguments.get("issue_key", "")
+                    transition_name = arguments.get("transition_name", "")
+                    result = self.db.transition_issue(issue_key, transition_name)
                     return [TextContent(type="text", text=json.dumps(result, indent=2))]
                 else:
                     return [TextContent(type="text", text=f"Unknown tool: {name}")]

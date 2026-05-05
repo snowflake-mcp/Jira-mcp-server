@@ -1,6 +1,6 @@
 # Jira MCP Server
 
-An MCP (Model Context Protocol) server that lets AI assistants interact with Jira — read tickets, manage comments, and transition issue statuses.
+An MCP (Model Context Protocol) server that lets AI assistants read Jira tickets. This MCP server uses API token based authentication. 
 
 -----
 
@@ -38,7 +38,7 @@ Add the following to your Cursor MCP config (`.cursor/mcp.json`):
   "mcpServers": {
     "jira": {
       "command": "/full/path/to/jira-mcp-server/venv/bin/python",
-      "args": ["/full/path/to/jira-mcp-server/jira_mcp/main.py"]
+      "args": ["/full/path/to/jira-mcp-server/jira_mcp/main.py"],
     }
   }
 }
